@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+    <meta charset="UTF-8">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400&display=swap"
+        rel="stylesheet">
+    <title>Classificador d'Estils</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+</head>
+
+<body>
+    <header class="header">
+        <h1>
+            <span class="line1">classify</span>
+            <span class="line2">your <span class="style-text">STYLE</span></span>
+        </h1>
+    </header>
+    <div id="controls">
+        <label for="image-input" id="upload-btn">Pujar imatge</label>
+        <button id="webcam-btn">Activar Webcam</button>
+        <input type="file" id="image-input" accept="image/*">
+    </div>
+
+    <div id="container">
+        <div id="display">
+            <video id="webcam" autoplay playsinline></video>
+            <img id="uploaded-image">
+            <button id="capture-btn"></button>
+
+        </div>
+
+        <div id="result">
+            <h2>Resultat:</h2>
+            <p id="predicted-class">-</p>
+            <p id="confidence">-</p>
+        </div>
+
+        <div id="probabilities">
+            <h3>Probabilitats:</h3>
+            <div class="prob-bar"><span>Old Money:</span> <progress id="prob-oldmoney" value="0" max="100"></progress>
+                <span id="val-oldmoney">0%</span></div>
+            <div class="prob-bar"><span>Streetwear:</span> <progress id="prob-streetwear" value="0"
+                    max="100"></progress> <span id="val-streetwear">0%</span></div>
+            <div class="prob-bar"><span>CottageCore:</span> <progress id="prob-cottagecore" value="0"
+                    max="100"></progress> <span id="val-cottagecore">0%</span></div>
+            <div class="prob-bar"><span>Rockstar:</span> <progress id="prob-rockstar" value="0" max="100"></progress>
+                <span id="val-rockstar">0%</span></div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
