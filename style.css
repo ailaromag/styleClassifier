@@ -110,6 +110,16 @@ h1 .style-text {
 
 }
 
+#overlay {
+    position: absolute;
+    display: none;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    pointer-events: none;
+}
+
 #capture-btn {
     display: none;
     position: absolute;

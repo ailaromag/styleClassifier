@@ -18,6 +18,12 @@ const elements = {
     display: document.getElementById("display")
 };
 
+const overlays = {
+    "OldMoney": "img/crown.png",
+    "Streetwear": "img/cap.png",
+    "CottageCore": "img/flowers.png",
+    "Rockstar": "img/glasses.png"
+};
 
 /**
  * Carrega el model de Teachable Machine des de la URL 
@@ -101,7 +107,9 @@ async function predict(imageElement) {
     if (best.probability > THRESHOLD) {
         elements.predictedClass.textContent = best.className;
         elements.confidence.textContent = `Confiança: ${(best.probability * 100).toFixed(1)}%`;
-        
+        document.getElementById("overlay").src = overlays[best.className];
+        document.getElementById("overlay").style.display = "block";
+
     } else {
         elements.predictedClass.textContent = "Classe desconeguda";
         elements.confidence.textContent = "Cap predicció supera el llindar";
