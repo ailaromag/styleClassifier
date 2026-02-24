@@ -8,9 +8,13 @@
         rel="stylesheet">
     <title>Classificador d'Estils</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <script
-        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -44,13 +48,15 @@
         <div id="probabilities">
             <h3>Probabilitats:</h3>
             <div class="prob-bar"><span>Old Money:</span> <progress id="prob-oldmoney" value="0" max="100"></progress>
-                <span id="val-oldmoney">0%</span></div>
+                <span id="val-oldmoney">0%</span>
+            </div>
             <div class="prob-bar"><span>Streetwear:</span> <progress id="prob-streetwear" value="0"
                     max="100"></progress> <span id="val-streetwear">0%</span></div>
             <div class="prob-bar"><span>CottageCore:</span> <progress id="prob-cottagecore" value="0"
                     max="100"></progress> <span id="val-cottagecore">0%</span></div>
             <div class="prob-bar"><span>Rockstar:</span> <progress id="prob-rockstar" value="0" max="100"></progress>
-                <span id="val-rockstar">0%</span></div>
+                <span id="val-rockstar">0%</span>
+            </div>
         </div>
 
     </div>
