@@ -113,11 +113,9 @@ h1 .style-text {
 #overlay {
     position: absolute;
     display: none;
-    top: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50%;
     pointer-events: none;
+    z-index:10; /* Ensures overlay is always on top of image */
+    transition: all 0.1s ease-out;
 }
 
 #capture-btn {
