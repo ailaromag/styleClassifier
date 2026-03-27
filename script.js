@@ -150,55 +150,88 @@ elements.webcamBtn.addEventListener("click", () => {
     state.isWebcamActive ? stopWebcam() : startWebcam();
 });
 
+
+/**
+ * Metode de suport: Detecta la cara i retorna el bounding box
+ */
+function detectFace(imageElement) {
+    return new Promise((resolve) => {
+        state.faceDetector.onResults((results) => {
+            if (results.detections.length > 0) {
+                resolve(results.detections[0].boundingBox);
+            } else {
+                resolve(null);
+            }
+        });
+        state.faceDetector.send({ image: imageElement });
+    });
+}
+
+/**
+ * Posiciona el overlay en base del bounding box de la cara
+ */
+function positionOverlay(box) {
+    if (!box || !state.currentStyle) return;
+
+    const displayW = elements.display.clientWidth;
+    const displayH = elements.display.clientHeight;
+
+    // MediaPipe coordinates are 0.0 to 1.0. We map them to pixels.
+    const width = box.width * displayW;
+    const height = box.height * displayH;
+    const x = (box.xCenter - box.width / 2) * displayW;
+    const y = (box.yCenter - box.height / 2) * displayH;
+
+    elements.overlay.src = overlays[state.currentStyle];
+    elements.overlay.style.display = "block";
+    
+    // Set size relative to face size
+    elements.overlay.style.width = (width * 1.5) + "px"; // Make it slightly wider than the face
+
+    // POSITIONING LOGIC
+    // We center the overlay horizontally
+    elements.overlay.style.left = (x - (width * 0.25)) + "px"; 
+
+    // Vertical adjustment: Crowns and Caps need to be ABOVE the head. 
+    // Glasses need to be ON the eyes.
+    let yOffset = 0;
+    if (state.currentStyle === "OldMoney" || state.currentStyle === "Streetwear") {
+        yOffset = height * 0.7; // Move up 70% of face height
+    } else if (state.currentStyle === "Rockstar") {
+        yOffset = height * 0.1; // Glasses sit near the top of the detected box
+    }
+
+    elements.overlay.style.top = (y - yOffset) + "px";
+}
+
 /**
  * Captura el frame actual de la webcam i executa la predicció
  * Lógica de detecció facial + posicionament del overlay de l'estil classificat
  */
 elements.captureBtn.addEventListener("click", async () => {
     if (!state.webcam) return;
+    
     const imageDataURL = state.webcam.canvas.toDataURL("image/png");
-    stopWebcam();
     showImage(imageDataURL);
-    elements.uploadedImage.classList.add("captured");  // Afegir classe
+    stopWebcam();
+
+    // 1. Predict the style
     await predict(elements.uploadedImage);
 
-
-    // Detecció de la cara en la imatge capturada:
+    // 2. If a style was found, detect face and position overlay
     if (state.currentStyle) {
-        // Detectar cara amb MediaPipe
-        let detectedBox = null;
-
-        state.faceDetector.onResults((results) => {
-            if (results.detections.length > 0) {
-                detectedBox = results.detections[0].boundingBox;
-            }
-        });
-
-        await state.faceDetector.send({ image: elements.uploadedImage });
-
-
-
-        if (detectedBox) {
-            // MediaPipe retorna coordenades normalitzades (0-1)
-            const displayW = elements.display.clientWidth;
-            const displayH = elements.display.clientHeight;
-
-            const x = detectedBox.xCenter - detectedBox.width / 2;
-            const y = detectedBox.yCenter - detectedBox.height / 2;
-
-            console.log("Box normalitzat:", x, y, detectedBox.width, detectedBox.height);
-            console.log("Display:", displayW, displayH);
-
-            elements.overlay.src = overlays[state.currentStyle];
-            elements.overlay.style.display = "block";
-            const overlayWidth = detectedBox.width * displayW;
-            elements.overlay.style.width = overlayWidth + "px";
-            elements.overlay.style.left = (detectedBox.xCenter * displayW ) + "px";
-            elements.overlay.style.top = ((y - detectedBox.height * 1) * displayH) + "px";
+        const box = await detectFace(elements.uploadedImage);
+        if (box) {
+            positionOverlay(box);
+        } else {
+            console.log("No face detected");
+            elements.overlay.style.display = "none";
         }
     }
-
 });
+
+
+
 
 /**
  * Processa una imatge pujada per l'usuari i executa la predicció
