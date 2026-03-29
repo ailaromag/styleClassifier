@@ -28,6 +28,13 @@
         <label for="image-input" id="upload-btn">Pujar imatge</label>
         <button id="webcam-btn">Activar Webcam</button>
         <input type="file" id="image-input" accept="image/*">
+        <div id="mode-toggle">
+            <label class="switch">
+                <input type="checkbox" id="mode-switch">
+                <span class="slider"></span>
+            </label>
+            <span id="mode-label">Mode Kids</span>
+        </div>
     </div>
 
     <div id="container">
@@ -35,11 +42,12 @@
             <video id="webcam" autoplay playsinline></video>
             <img id="uploaded-image">
             <img id="overlay">
+            <div id="flash"></div>
             <button id="capture-btn"></button>
-
         </div>
 
         <div id="result">
+            <div id="loading">Classificant el teu estil...</div>
             <h2>Resultat:</h2>
             <p id="predicted-class">-</p>
             <p id="confidence">-</p>
@@ -47,20 +55,22 @@
 
         <div id="probabilities">
             <h3>Probabilitats:</h3>
-            <div class="prob-bar"><span>Old Money:</span> <progress id="prob-oldmoney" value="0" max="100"></progress>
+            <div class="prob-bar"><span id="label-oldmoney">Old Money:</span> <progress id="prob-oldmoney" value="0" max="100"></progress>
                 <span id="val-oldmoney">0%</span>
             </div>
-            <div class="prob-bar"><span>Streetwear:</span> <progress id="prob-streetwear" value="0"
+            <div class="prob-bar"><span id="label-streetwear">Streetwear:</span> <progress id="prob-streetwear" value="0"
                     max="100"></progress> <span id="val-streetwear">0%</span></div>
-            <div class="prob-bar"><span>CottageCore:</span> <progress id="prob-cottagecore" value="0"
-                    max="100"></progress> <span id="val-cottagecore">0%</span></div>
-            <div class="prob-bar"><span>Rockstar:</span> <progress id="prob-rockstar" value="0" max="100"></progress>
+            <div class="prob-bar"><span id = "label-cottagecore">CottageCore:</span> <progress id="prob-cottagecore" value="0"
+                    max="100"></progress> <span id="label-cottagecore">0%</span></div>
+            <div class="prob-bar"><span id ="label-rockstar">Rockstar:</span> <progress id="prob-rockstar" value="0" max="100"></progress>
                 <span id="val-rockstar">0%</span>
             </div>
         </div>
 
     </div>
     <script src="script.js"></script>
+    <script src="config.js"></script>
+
 </body>
 
 </html>

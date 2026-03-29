@@ -114,7 +114,8 @@ h1 .style-text {
     position: absolute;
     display: none;
     pointer-events: none;
-    z-index:10; /* Ensures overlay is always on top of image */
+    z-index: 10;
+    /* Ensures overlay is always on top of image */
     transition: all 0.1s ease-out;
 }
 
@@ -231,7 +232,10 @@ h3 {
 }
 
 .prob-bar span:first-child {
-    width: 100px;
+    width: 130px;
+    min-width: 130px;
+    white-space: nowrap;
+    font-size: 0.95rem;
 }
 
 progress {
@@ -253,4 +257,96 @@ progress::-webkit-progress-value {
 
 progress::-moz-progress-bar {
     background-color: #7d2222;
+}
+
+#flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 15;
+}
+
+#flash.active {
+    animation: flash 0.4s ease-out;
+}
+
+@keyframes flash {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+#loading {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #bd9494;
+    padding: 10px 0;
+    display: none;
+}
+
+#mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#mode-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #333;
+}
+
+.switch {
+    position: relative;
+    width: 50px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 28px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.slider::before {
+    content: '';
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.switch input:checked+.slider {
+    background-color: #7d2222;
+}
+
+.switch input:checked+.slider::before {
+    transform: translateX(22px);
 }

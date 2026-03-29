@@ -1,5 +1,5 @@
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/bMXg8u3wX/";
-const THRESHOLD = 0.7;
+const THRESHOLD = 0.3;//0.7;
 
 const state = {
     model: null,
@@ -7,7 +7,9 @@ const state = {
     webcam: null,
     isWebcamActive: false,
     currentStyle: null,
-    isDetecting: false
+    isDetecting: false,
+    lastFaceBox: null,
+    kidMode: false
 };
 
 const elements = {
@@ -22,12 +24,6 @@ const elements = {
 
 };
 
-const overlays = {
-    "OldMoney": "img/crown.png",
-    "Streetwear": "img/cap.png",
-    "CottageCore": "img/flowers.png",
-    "Rockstar": "img/glasses.png"
-};
 
 /**
  * Carrega el model de Teachable Machine des de la URL 
@@ -96,12 +92,12 @@ async function updateWebcam() { // Ara és async perque utilitzam await per la d
             try {
                 const box = await detectFace(state.webcam.canvas);
                 if (box) {
+                    state.lastFaceBox = box;
                     positionOverlay(box);
                 } else {
                     elements.overlay.style.display = "none";
                 }
             } catch (e) {
-                // silently ignore detection errors to keep the loop alive
             }
             state.isDetecting = false;
         }
@@ -142,12 +138,12 @@ async function predict(imageElement) {
     });
 
     if (best.probability > THRESHOLD) {
-        elements.predictedClass.textContent = best.className;
+        //elements.predictedClass.textContent = best.className;
+        const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
+        elements.predictedClass.textContent = names[best.className];
         state.currentStyle = best.className;
         elements.confidence.textContent = `Confiança: ${(best.probability * 100).toFixed(1)}%`;
-        //document.getElementById("overlay").src = overlays[best.className];
-        //document.getElementById("overlay").style.display = "block";
-        elements.overlay.src = overlays[best.className];
+        elements.overlay.src = CONFIG.overlays[best.className];
 
     } else {
         elements.predictedClass.textContent = "Classe desconeguda";
@@ -195,29 +191,28 @@ function positionOverlay(box) {
     const displayW = elements.display.clientWidth;
     const displayH = elements.display.clientHeight;
 
-    // MediaPipe coordinates are 0.0 to 1.0. We map them to pixels.
+    // Coordenades de MediaPipe son de 0.0 a 1.0. Les mapejam a pixels
     const width = box.width * displayW;
     const height = box.height * displayH;
     const x = (box.xCenter - box.width / 2) * displayW;
     const y = (box.yCenter - box.height / 2) * displayH;
 
-    elements.overlay.src = overlays[state.currentStyle];
+    elements.overlay.src = CONFIG.overlays[state.currentStyle];
     elements.overlay.style.display = "block";
 
-    // Set size relative to face size
-    elements.overlay.style.width = (width * 1.5) + "px"; // Make it slightly wider than the face
+    // Canviam el tamany relatiu a la cara, un poc mes ample
+    elements.overlay.style.width = (width * 1.5) + "px";
 
-    // POSITIONING LOGIC
-    // We center the overlay horizontally
+    // LÒGICA DE POSICIONAMENT
+    // Centram horitzontalment
     elements.overlay.style.left = (x - (width * 0.25)) + "px";
 
-    // Vertical adjustment: Crowns and Caps need to be ABOVE the head. 
-    // Glasses need to be ON the eyes.
+    // Ajust vertical per als diferents components
     let yOffset = 0;
     if (state.currentStyle === "OldMoney") {
-        yOffset = height * 1.5; // Move up 70% of face height
+        yOffset = height * 1.1;
     } else if (state.currentStyle === "Rockstar") {
-        yOffset = height * 0.1; // Glasses sit near the top of the detected box
+        yOffset =0.0; // height * 0.0;
     } else if (state.currentStyle === "Streetwear") {
         yOffset = height * 1.2;
     } else if (state.currentStyle === "CottageCore") {
@@ -234,29 +229,43 @@ function positionOverlay(box) {
 elements.captureBtn.addEventListener("click", async () => {
     if (!state.webcam) return;
 
-    //const imageDataURL = state.webcam.canvas.toDataURL("image/png");
-    //showImage(imageDataURL);
-    //stopWebcam();
-
-    // 1. Predict the style
-    await predict(elements.uploadedImage);
-    //  await predict(state.webcam.canvas);
+    // Efecte flash
+    const flash = document.getElementById("flash");
+    flash.classList.remove("active");
+    void flash.offsetWidth;
+    flash.classList.add("active");
 
 
-    // Overlay tracking now happens automatically in updateWebcam
-    // 2. If a style was found, detect face and position overlay
-    /*
-    if (state.currentStyle) {
-        const box = await detectFace(elements.uploadedImage);
-        if (box) {
-            positionOverlay(box);
-        } else {
-            console.log("No face detected");
-            elements.overlay.style.display = "none";
+    // 1. Congelar: capturar el frame com imatge estàtica
+    const imageDataURL = state.webcam.canvas.toDataURL("image/png");
+    showImage(imageDataURL);
+    elements.uploadedImage.classList.add("captured");
+    state.webcam.pause();       //Pausam per un segon
+    document.getElementById("webcam-canvas").style.display = "none";
+
+    const loading = document.getElementById("loading");
+    loading.style.display = "block";
+
+    // 2. Classificar la imatge estática
+    setTimeout(async () => {
+        await predict(elements.uploadedImage);
+        loading.style.display = "none";
+
+        if (state.currentStyle && state.lastFaceBox) {
+            positionOverlay(state.lastFaceBox);
         }
-    }
-        */
+        // Després 1 segon, amagar la imatge estàtica i tornar al tracking en viu
+        setTimeout(async () => {
+            elements.uploadedImage.style.display = "none";
+            document.getElementById("webcam-canvas").style.display = "block";
+            await state.webcam.play();
+            requestAnimationFrame(updateWebcam);
+        }, 1000);
+
+    }, 50);
 });
+
+
 
 
 
@@ -280,5 +289,26 @@ elements.imageInput.addEventListener("change", async (e) => {
     };
     reader.readAsDataURL(file);
 });
+
+document.getElementById("mode-switch").addEventListener("change", (e) => {
+    state.kidMode = e.target.checked;
+    updateLabels();
+
+    if (state.currentStyle) {
+        const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
+        elements.predictedClass.textContent = names[state.currentStyle];
+    }
+});
+
+function updateLabels() {
+    const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
+    for (const key in names) {
+        const label = document.getElementById(`label-${key.toLowerCase()}`);
+        if (label) label.textContent = names[key] + ":";
+    }
+}
+
+
+
 
 init();
