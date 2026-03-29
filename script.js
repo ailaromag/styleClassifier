@@ -6,7 +6,8 @@ const state = {
     maxPredictions: 0,
     webcam: null,
     isWebcamActive: false,
-    currentStyle: null
+    currentStyle: null,
+    isDetecting: false
 };
 
 const elements = {
@@ -83,11 +84,28 @@ async function startWebcam() {
 }
 
 /**
- * Actualitza el frame de la webcam.
+ * Actualitza el frame de la webcam. Ha de detectar la cara en cada frame
  */
 async function updateWebcam() { // Ara és async perque utilitzam await per la detecció facial
     if (state.isWebcamActive && state.webcam) {
         state.webcam.update();
+
+        // Si hi ha un estil classificat, detectar la cara en el canvas en viu
+        if (state.currentStyle && !state.isDetecting) {
+            state.isDetecting = true;
+            try {
+                const box = await detectFace(state.webcam.canvas);
+                if (box) {
+                    positionOverlay(box);
+                } else {
+                    elements.overlay.style.display = "none";
+                }
+            } catch (e) {
+                // silently ignore detection errors to keep the loop alive
+            }
+            state.isDetecting = false;
+        }
+
         requestAnimationFrame(updateWebcam);
     }
 }
@@ -127,8 +145,9 @@ async function predict(imageElement) {
         elements.predictedClass.textContent = best.className;
         state.currentStyle = best.className;
         elements.confidence.textContent = `Confiança: ${(best.probability * 100).toFixed(1)}%`;
-        document.getElementById("overlay").src = overlays[best.className];
-        document.getElementById("overlay").style.display = "block";
+        //document.getElementById("overlay").src = overlays[best.className];
+        //document.getElementById("overlay").style.display = "block";
+        elements.overlay.src = overlays[best.className];
 
     } else {
         elements.predictedClass.textContent = "Classe desconeguda";
@@ -184,21 +203,25 @@ function positionOverlay(box) {
 
     elements.overlay.src = overlays[state.currentStyle];
     elements.overlay.style.display = "block";
-    
+
     // Set size relative to face size
     elements.overlay.style.width = (width * 1.5) + "px"; // Make it slightly wider than the face
 
     // POSITIONING LOGIC
     // We center the overlay horizontally
-    elements.overlay.style.left = (x - (width * 0.25)) + "px"; 
+    elements.overlay.style.left = (x - (width * 0.25)) + "px";
 
     // Vertical adjustment: Crowns and Caps need to be ABOVE the head. 
     // Glasses need to be ON the eyes.
     let yOffset = 0;
-    if (state.currentStyle === "OldMoney" || state.currentStyle === "Streetwear") {
-        yOffset = height * 0.7; // Move up 70% of face height
+    if (state.currentStyle === "OldMoney") {
+        yOffset = height * 1.5; // Move up 70% of face height
     } else if (state.currentStyle === "Rockstar") {
         yOffset = height * 0.1; // Glasses sit near the top of the detected box
+    } else if (state.currentStyle === "Streetwear") {
+        yOffset = height * 1.2;
+    } else if (state.currentStyle === "CottageCore") {
+        yOffset = height * 1;
     }
 
     elements.overlay.style.top = (y - yOffset) + "px";
@@ -210,15 +233,19 @@ function positionOverlay(box) {
  */
 elements.captureBtn.addEventListener("click", async () => {
     if (!state.webcam) return;
-    
-    const imageDataURL = state.webcam.canvas.toDataURL("image/png");
-    showImage(imageDataURL);
-    stopWebcam();
+
+    //const imageDataURL = state.webcam.canvas.toDataURL("image/png");
+    //showImage(imageDataURL);
+    //stopWebcam();
 
     // 1. Predict the style
     await predict(elements.uploadedImage);
+    //  await predict(state.webcam.canvas);
 
+
+    // Overlay tracking now happens automatically in updateWebcam
     // 2. If a style was found, detect face and position overlay
+    /*
     if (state.currentStyle) {
         const box = await detectFace(elements.uploadedImage);
         if (box) {
@@ -228,6 +255,7 @@ elements.captureBtn.addEventListener("click", async () => {
             elements.overlay.style.display = "none";
         }
     }
+        */
 });
 
 
