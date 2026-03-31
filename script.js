@@ -1,5 +1,7 @@
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/bMXg8u3wX/";
 const THRESHOLD = 0.3;//0.7;
+const galleryQueue = [];
+const MAX_GALLERY = 10;
 
 const state = {
     model: null,
@@ -141,13 +143,13 @@ async function predict(imageElement) {
         const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
         elements.predictedClass.textContent = names[best.className];
         state.currentStyle = best.className;
-        elements.confidence.textContent = `Confiança: ${(best.probability * 100).toFixed(1)}%`;
-        //elements.overlay.src = CONFIG.overlays[best.className];
+        elements.confidence.textContent = `amb confiança del: ${(best.probability * 100).toFixed(1)}%`;
+        elements.overlay.src = CONFIG.overlays[best.className];
         // Comentat per testejar els Overlays:
         //elements.overlay.src=CONFIG.overlays[0]; // OldMoney
-        //elements.overlay.src=CONFIG.overlays[1]; // Streetwear
+        //  elements.overlay.src=CONFIG.overlays[1]; // Streetwear
         //elements.overlay.src=CONFIG.overlays[2]; // CottageCore
-        elements.overlay.src=CONFIG.overlays[3]; // Rockstar
+        // elements.overlay.src = CONFIG.overlays[3]; // Rockstar
 
         elements.resetBtn.style.display = "block";
 
@@ -228,6 +230,13 @@ function positionOverlay(box) {
     elements.overlay.style.top = (y - yOffset) + "px";
 }
 
+function detectFaceWithTimeout(imageElement, ms = 2000) {
+    return Promise.race([
+        detectFace(imageElement),
+        new Promise(resolve => setTimeout(() => resolve(null), ms))
+    ]);
+}
+
 /**
  * Captura el frame actual de la webcam i executa la predicció
  * Lógica de detecció facial + posicionament del overlay de l'estil classificat
@@ -254,13 +263,32 @@ elements.captureBtn.addEventListener("click", async () => {
 
     // 2. Classificar la imatge estática
     setTimeout(async () => {
+        // 1. Detectar la cara PRIMER
+        let faceBox = null;
+        try {
+            const tempCanvas = document.createElement("canvas");
+            tempCanvas.width = 400;
+            tempCanvas.height = 400;
+            tempCanvas.getContext("2d").drawImage(elements.uploadedImage, 0, 0, 400, 400);
+            faceBox = await detectFaceWithTimeout(tempCanvas);
+            if (faceBox) state.lastFaceBox = faceBox;
+        } catch (e) {
+            console.warn("Face detection failed:", e);
+        }
+
+        // 2. Classificar
         await predict(elements.uploadedImage);
         loading.style.display = "none";
 
-        if (state.currentStyle && state.lastFaceBox) {
-            positionOverlay(state.lastFaceBox);
+        // 3. Posicionar overlay on ja sabem que hi ha la cara
+        if (state.currentStyle && faceBox) {
+            positionOverlay(faceBox);
         }
-        // Després 1 segon, amagar la imatge estàtica i tornar al tracking en viu
+
+        // 4. Afegir a la galeria (amb overlay ja posicionat)
+        addToGallery();
+
+        // 5. Tornar al tracking en viu
         setTimeout(async () => {
             elements.uploadedImage.style.display = "none";
             document.getElementById("webcam-canvas").style.display = "block";
@@ -270,8 +298,6 @@ elements.captureBtn.addEventListener("click", async () => {
 
     }, 50);
 });
-
-
 
 
 
@@ -319,6 +345,9 @@ elements.resetBtn.addEventListener("click", () => {
     resetValues();
 });
 
+/**
+ * Reseteja els valors de la classificació anterior
+ */
 function resetValues() {
     state.currentStyle = null;
     state.currentOverlay = null;
@@ -339,6 +368,76 @@ function resetValues() {
 
 }
 
+
+/**
+ * Renderitzar galeria als costats
+ */
+function addToGallery() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 400;
+    canvas.height = 400;
+    const ctx = canvas.getContext("2d");
+
+    // Capture the image data RIGHT NOW as a snapshot
+    const snapshot = new Image();
+    snapshot.src = elements.uploadedImage.src;
+
+    const ol = elements.overlay;
+    const hasOverlay = ol.style.display !== "none" && state.currentStyle;
+    const olSrc = ol.src;
+    const olLeft = parseFloat(ol.style.left);
+    const olTop = parseFloat(ol.style.top);
+    const olWidth = parseFloat(ol.style.width);
+    const displayW = elements.display.clientWidth;
+    const displayH = elements.display.clientHeight;
+
+    const draw = () => {
+        ctx.drawImage(snapshot, 0, 0, 400, 400);
+
+        if (hasOverlay) {
+            const overlayImg = new Image();
+            overlayImg.src = olSrc;
+
+            const finalize = () => {
+                const scaleX = 400 / displayW;
+                const scaleY = 400 / displayH;
+                const x = olLeft * scaleX;
+                const y = olTop * scaleY;
+                const w = olWidth * scaleX;
+                const h = overlayImg.naturalHeight * (w / overlayImg.naturalWidth);
+
+                ctx.drawImage(overlayImg, x, y, w, h);
+                appendToGalleryGrid(canvas.toDataURL("image/jpeg", 0.5));
+            };
+
+            if (overlayImg.complete) finalize();
+            else overlayImg.onload = finalize;
+        } else {
+            appendToGalleryGrid(canvas.toDataURL("image/jpeg", 0.5));
+        }
+    };
+
+    if (snapshot.complete) draw();
+    else snapshot.onload = draw;
+}
+let galleryCount = 0;
+function appendToGalleryGrid(dataURL) {
+    const leftGrid = document.querySelector("#gallery-left .gallery-grid");
+    const rightGrid = document.querySelector("#gallery-right .gallery-grid");
+
+    const target = galleryCount % 2 === 0 ? leftGrid : rightGrid;
+    galleryCount++;
+
+    const img = document.createElement("img");
+    img.src = dataURL;
+    target.appendChild(img);
+    galleryQueue.push(img);
+
+    if (galleryQueue.length > MAX_GALLERY) {
+        const oldest = galleryQueue.shift();
+        oldest.remove();
+    }
+}
 
 
 
