@@ -20,7 +20,8 @@ const elements = {
     predictedClass: document.getElementById("predicted-class"),
     confidence: document.getElementById("confidence"),
     display: document.getElementById("display"),
-    overlay: document.getElementById("overlay")
+    overlay: document.getElementById("overlay"),
+    resetBtn: document.getElementById("reset-btn")
 
 };
 
@@ -48,15 +49,14 @@ async function init() {
  */
 function stopWebcam() {
     if (!state.webcam) return;
-
     state.webcam.stop();
+    state.isWebcamActive = false;
+
     document.getElementById("webcam-canvas")?.remove();
     elements.captureBtn.style.display = "none";
-    elements.overlay.style.display = "none";
-    state.isWebcamActive = false;
-    state.currentStyle = null;
     elements.webcamBtn.textContent = "Activar Webcam";
 
+    resetValues();
 }
 
 /**
@@ -138,18 +138,24 @@ async function predict(imageElement) {
     });
 
     if (best.probability > THRESHOLD) {
-        //elements.predictedClass.textContent = best.className;
         const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
         elements.predictedClass.textContent = names[best.className];
         state.currentStyle = best.className;
         elements.confidence.textContent = `Confiança: ${(best.probability * 100).toFixed(1)}%`;
-        elements.overlay.src = CONFIG.overlays[best.className];
+        //elements.overlay.src = CONFIG.overlays[best.className];
+        // Comentat per testejar els Overlays:
+        //elements.overlay.src=CONFIG.overlays[0]; // OldMoney
+        //elements.overlay.src=CONFIG.overlays[1]; // Streetwear
+        //elements.overlay.src=CONFIG.overlays[2]; // CottageCore
+        elements.overlay.src=CONFIG.overlays[3]; // Rockstar
+
+        elements.resetBtn.style.display = "block";
 
     } else {
         elements.predictedClass.textContent = "Classe desconeguda";
         elements.confidence.textContent = "Cap predicció supera el llindar";
         state.currentStyle = null;
-        document.getElementById("overlay").style.display = "none";
+        elements.overlay.style.display = "none";
     }
 }
 
@@ -212,7 +218,7 @@ function positionOverlay(box) {
     if (state.currentStyle === "OldMoney") {
         yOffset = height * 1.1;
     } else if (state.currentStyle === "Rockstar") {
-        yOffset =0.0; // height * 0.0;
+        yOffset = 0.0; // height * 0.0;
     } else if (state.currentStyle === "Streetwear") {
         yOffset = height * 1.2;
     } else if (state.currentStyle === "CottageCore") {
@@ -306,6 +312,31 @@ function updateLabels() {
         const label = document.getElementById(`label-${key.toLowerCase()}`);
         if (label) label.textContent = names[key] + ":";
     }
+}
+
+
+elements.resetBtn.addEventListener("click", () => {
+    resetValues();
+});
+
+function resetValues() {
+    state.currentStyle = null;
+    state.currentOverlay = null;
+    state.lastFaceBox = null;
+    elements.overlay.style.display = "none";
+    elements.predictedClass.textContent = "-";
+    elements.confidence.textContent = "-";
+    elements.resetBtn.style.display = "none";
+
+    // Resetejam les barres de progress
+    for (const key in CONFIG.names.adult) {
+        const id = key.toLowerCase();
+        const bar = document.getElementById(`prob-${id}`);
+        const val = document.getElementById(`val-${id}`);
+        if (bar) bar.value = 0;
+        if (val) val.textContent = "0%";
+    }
+
 }
 
 
