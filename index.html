@@ -25,24 +25,25 @@
         <div id="main">
             <header class="header">
                 <h1>
-                    <span class="line1">classify</span>
-                    <span class="line2">your <span class="style-text">STYLE</span></span>
+                    <!-- <span class="line1">classify</span>--> 
+                  <span class="line2">classify your <span class="style-text">STYLE</span></span>
                 </h1>
             </header>
-            <div id="controls">
-                <label for="image-input" id="upload-btn">Pujar imatge</label>
-                <button id="webcam-btn">Activar Webcam</button>
-                <input type="file" id="image-input" accept="image/*">
-                <div id="mode-toggle">
-                    <label class="switch">
-                        <input type="checkbox" id="mode-switch">
-                        <span class="slider"></span>
-                    </label>
-                    <span id="mode-label">Mode Kids</span>
-                </div>
-            </div>
+
 
             <div id="container">
+                <div id="controls">
+                    <label for="image-input" id="upload-btn">Pujar imatge</label>
+                    <button id="webcam-btn">Activar Webcam</button>
+                    <input type="file" id="image-input" accept="image/*">
+                    <div id="mode-toggle">
+                        <label class="switch">
+                            <input type="checkbox" id="mode-switch">
+                            <span class="slider"></span>
+                        </label>
+                        <span id="mode-label">Mode Kids</span>
+                    </div>
+                </div>
                 <div id="display">
                     <video id="webcam" autoplay playsinline></video>
                     <img id="uploaded-image">

@@ -11,15 +11,30 @@ h3 {
 }
 
 body {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 1vw;
     background-color: #eadbbf;
+
+    /* Staggered dot/hex pattern */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%23ffffff' fill-opacity='0.25'%3E%3Ccircle cx='2' cy='2' r='1.5'/%3E%3Ccircle cx='6' cy='6' r='1'/%3E%3C/g%3E%3C/svg%3E");
+
+    /* Subtle paper-like gradient over the top */
+    background-blend-mode: overlay;
 }
+
+/* Noise layer for gritty texture */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+
 
 #layout {
     display: flex;
-    gap: 0.75vw;
+    /* gap: 0.3vw;*/
     align-items: flex-start;
     max-width: 1600px;
     margin: 0 auto;
@@ -29,18 +44,23 @@ body {
     flex: 3;
     min-width: 0;
     text-align: center;
+    max-width: 42vw;
+
 }
 
 .gallery-side {
-    flex: 1;
+    flex: 1.5;
     min-width: 150px;
     align-self: stretch;
+    display: flex;
+    justify-content: center;
 }
 
 .gallery-grid {
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 0.4vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2vw;
+       
 }
 
 .gallery-grid img {
@@ -63,8 +83,8 @@ h1 {
     line-height: 0.6;
     font-weight: bold;
     max-width: fit-content;
-    margin: 0 auto 1vw auto;
-    padding: 1vw;
+    margin: 0 auto 3.5vw auto;
+    padding-top: 0.7vw;
 }
 
 h1 .line1 {
@@ -79,7 +99,7 @@ h1 .line2 {
     font-size: 3.15vw;
     font-weight: bold;
     font-family: 'Playfair Display', serif;
-    word-spacing: 1.75vw;
+    word-spacing: 0.5vw;
 }
 
 h1 .style-text {
@@ -95,25 +115,26 @@ h1 .style-text {
     padding: 1vw;
     border-radius: 0.5vw;
     box-shadow: 0 0.1vw 0.5vw rgba(0, 0, 0, 0.1);
-}
+    background-color: #f9f8f4;
+    /* A slightly warmer 'aged' white */
+    background-image:
+        /* 1. Glossy highlight (diagonal sheen) */
+        linear-gradient(120deg, transparent 45%, rgba(255, 255, 255, 0.6) 50%, transparent 55%),
+        /* 2. Subtle paper grain */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
 
-#webcam-btn {
-    display: inline-block;
-    padding: 0.6vw 1.25vw;
-    background-color: #333;
-    color: white;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 0.55vw;
-    clip-path: polygon(8% 0%,
-            92% 0%,
-            100% 100%,
-            0% 100%);
-}
+    background-size: 200% 100%, auto;
+    /* Stretches the sheen across the container */
 
-#webcam-btn:hover {
-    background-color: #555;
+    /* Improved Box Shadow for a 'heavy' paper feel */
+    box-shadow:
+        0 0.1vw 0.2vw rgba(0, 0, 0, 0.05),
+        /* Subtle edge */
+        0 0.5vw 1.5vw rgba(0, 0, 0, 0.1);
+    /* Soft lift */
+
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    /* Defines the cut edge of the paper */
 }
 
 #webcam {
@@ -131,9 +152,12 @@ h1 .style-text {
 }
 
 #display {
-    max-width: 25vw;
-    margin: 1.5vw auto 1vw auto;
-    aspect-ratio: 1/1;
+    width: 100%;
+    max-width: 34vw;
+    height: 55vh;
+    /* margin: 1.5vw auto 1vw auto;*/
+    /* aspect-ratio: 1/1;*/
+    margin: 0.75vw auto;
     background-color: #eee;
     border-radius: 0.25vw;
     overflow: hidden;
@@ -210,32 +234,55 @@ h1 .style-text {
     display: flex;
     gap: 0.5vw;
     margin-bottom: 0;
+    position: relative;
+    z-index: 2;
+    margin-top: -1.98vw;
+    transform: translateY(-50%);
 }
 
 #image-input {
     display: none;
 }
 
+#webcam-btn,
 #upload-btn {
     display: inline-block;
     padding: 0.6vw 1.25vw;
-    margin-left: 0.25vw;
-    margin-right: -0.25vw;
     background-color: #333;
+    /* Your original dark color */
     color: white;
+    /* Your original text color */
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-size: 0.55vw;
-    clip-path: polygon(8% 0%,
-            92% 0%,
-            100% 100%,
-            0% 100%);
+
+    /* THE SHAPE */
+    clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
+
+    /* THE TEXTURE FOR DARK BACKGROUNDS */
+    background-image:
+        /* 1. Subtle 'Gloss' reflection (Lowered opacity for dark bg) */
+        linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%),
+        /* 2. Light Grain (White noise at 0.08 opacity so it looks like paper fiber) */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' fill='%23fff' opacity='0.08'/%3E%3C/svg%3E");
+
+    background-size: 200% 100%, auto;
+
+    /* Subtle shadow to separate it from the #container */
+    box-shadow: 0 0.2vw 0.4vw rgba(0, 0, 0, 0.2);
+    border: none;
 }
 
+#webcam-btn:hover,
 #upload-btn:hover {
-    background-color: #555;
+    background-color: #444;
+    /* This makes the grain pop a bit more on hover */
+    background-image:
+        linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.2) 50%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' fill='%23fff' opacity='0.12'/%3E%3C/svg%3E");
 }
+
 
 #uploaded-image {
     max-width: 100%;
@@ -256,19 +303,17 @@ h1 .style-text {
     justify-content: center;
     gap: 0.75vw;
     padding: 0.4vw 1vw;
-    background-color: #f9f9f9;
     border-radius: 0.25vw;
     margin-bottom: 0;
-    font-size: 0.55vw;
 }
 
 #result h2 {
     margin: 0;
-    font-size: 0.65vw;
+    font-size: 1.3vw;
 }
 
 #predicted-class {
-    font-size: 0.85vw;
+    font-size: 1.5vw;
     font-weight: bold;
     color: #333;
     margin: 0;
@@ -278,7 +323,7 @@ h1 .style-text {
 #confidence {
     margin: 0;
     color: #888;
-    font-size: 0.75vw;
+    font-size: 1.2vw;
     font-family: 'Playfair Display', serif;
 }
 
@@ -288,7 +333,7 @@ h1 .style-text {
 }
 
 #probabilities h3 {
-    font-size: 0.75vw;
+    font-size: 1.4vw;
     margin: 0.25vw 0;
 }
 
@@ -297,14 +342,14 @@ h1 .style-text {
     align-items: center;
     gap: 0.5vw;
     margin-bottom: 0.5vw;
-    font-size: 0.55vw;
+    font-size: 1vw;
 }
 
 .prob-bar span:first-child {
-    width: 6.4vw;
-    min-width: 6.4vw;
+    width: 8.7vw;
+    min-width: 8.7vw;
     white-space: nowrap;
-    font-size: 0.475vw;
+    font-size: 1vw;
 }
 
 progress {
@@ -370,7 +415,7 @@ progress::-moz-progress-bar {
 }
 
 #mode-label {
-    font-size: 0.45vw;
+    font-size: 0.60vw;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #333;
@@ -428,6 +473,7 @@ progress::-moz-progress-bar {
     border-radius: 0.1vw;
     box-shadow: 0.1vw 0.15vw 0.4vw rgba(0, 0, 0, 0.2);
     transform: rotate(var(--rotation, 0deg));
+    max-width: 10vw;
 }
 
 .polaroid img {
@@ -442,7 +488,7 @@ progress::-moz-progress-bar {
     padding: 0.15vw 0.05vw;
     text-align: center;
     font-family: 'Playfair Display', serif;
-    font-size: 0.35vw;
+    font-size: 0.75vw;
     color: #333;
     line-height: 1.3;
 }

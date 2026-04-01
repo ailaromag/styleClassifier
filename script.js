@@ -1,7 +1,7 @@
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/bMXg8u3wX/";
 const THRESHOLD = 0.3;//0.7;
 const galleryQueue = [];
-const MAX_GALLERY = 10;
+const MAX_GALLERY = 16;
 
 const state = {
     model: null,
@@ -421,17 +421,32 @@ function addToGallery() {
     else snapshot.onload = draw;
 }
 let galleryCount = 0;
+
 function appendToGalleryGrid(dataURL) {
     const leftGrid = document.querySelector("#gallery-left .gallery-grid");
     const rightGrid = document.querySelector("#gallery-right .gallery-grid");
-
     const target = galleryCount % 2 === 0 ? leftGrid : rightGrid;
     galleryCount++;
 
-    const img = document.createElement("img");
-    img.src = dataURL;
-    target.appendChild(img);
-    galleryQueue.push(img);
+    const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
+    const style = state.currentStyle;
+    const conf = elements.confidence.textContent;
+
+    const polaroid = document.createElement("div");
+    polaroid.className = "polaroid";
+    polaroid.style.setProperty("--rotation", (Math.random() * 6 - 3) + "deg");
+
+    polaroid.innerHTML = `
+        <img src="${dataURL}">
+        <div class="polaroid-caption">
+            ${style ? (names[style] || style) : "?"}
+           <!-- <div class="polaroid-confidence">${conf}</div> -->
+        </div>
+    `;
+
+    target.appendChild(polaroid);
+    //target.prepend(polaroid);   this to have newest on top
+    galleryQueue.push(polaroid);
 
     if (galleryQueue.length > MAX_GALLERY) {
         const oldest = galleryQueue.shift();
@@ -439,6 +454,46 @@ function appendToGalleryGrid(dataURL) {
     }
 }
 
+// === DEBUG: simulate 8 captures ===
+setTimeout(() => {
+    const fakeCaptures = [
+        { style: "OldMoney", conf: 0.92, color: "#8b7355" },
+        { style: "Streetwear", conf: 0.85, color: "#444" },
+        { style: "CottageCore", conf: 0.78, color: "#a8c090" },
+        { style: "Rockstar", conf: 0.91, color: "#2a2a2a" },
+        { style: "OldMoney", conf: 0.73, color: "#b8a080" },
+        { style: "Streetwear", conf: 0.88, color: "#666" },
+        { style: "CottageCore", conf: 0.82, color: "#90b070" },
+        { style: "Rockstar", conf: 0.95, color: "#1a1a1a" },
+         { style: "OldMoney", conf: 0.92, color: "#8b7355" },
+        { style: "Streetwear", conf: 0.85, color: "#444" },
+        { style: "CottageCore", conf: 0.78, color: "#a8c090" },
+        { style: "Rockstar", conf: 0.91, color: "#2a2a2a" },
+        { style: "OldMoney", conf: 0.73, color: "#b8a080" },
+        { style: "Streetwear", conf: 0.88, color: "#666" },
+        { style: "CottageCore", conf: 0.82, color: "#90b070" },
+        { style: "Rockstar", conf: 0.95, color: "#1a1a1a" },
+    ];
+
+    fakeCaptures.forEach(({ style, conf, color }) => {
+        // Set state as if a real capture just happened
+        state.currentStyle = style;
+        const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
+        elements.confidence.textContent = `amb confiança del: ${(conf * 100).toFixed(1)}%`;
+
+        // Use the real gallery function
+        const c = document.createElement("canvas");
+        c.width = 1; c.height = 1;
+        c.getContext("2d").fillStyle = color;
+        c.getContext("2d").fillRect(0, 0, 1, 1);
+        appendToGalleryGrid(c.toDataURL());
+    });
+
+    // Clean up state
+    state.currentStyle = null;
+    elements.confidence.textContent = "-";
+}, 500);
+// === END DEBUG ===
 
 
 init();
