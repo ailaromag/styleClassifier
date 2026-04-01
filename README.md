@@ -22,7 +22,7 @@
 
 2. Objectiu: millorar interfície i posada a punt per fira de la ciència
        Idees:
-       - Millorar la interfície per a que es vegi més gran la foto a les pantalles de diferents portatils
+       - Millorar la interfície per a que es vegi més gran la foto a les pantalles de diferents portatils, posar textura de fons estil revista ...
        - Millorar l'aspecte del gallery wall per a que pareguin fotos polaroid amb la classificació deguda
        - Proposta Xavi: que s'obri un nou browser quan es fa una classificació per a que el nin pugui fer una foto
 
