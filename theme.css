@@ -1,0 +1,35 @@
+:root {
+    /* Colors */
+    --bg-warm: #eadbbf;
+    --paper-white: #f9f8f4;
+    --text-dark: #333;
+    --text-muted: #888;
+    --accent: #7d2222;
+    --grey-light: #e0e0e0;
+    --grey-bg: #eee;
+    --grey-mid: #ccc;
+
+    /* Fonts */
+    --font-body: 'Raleway', sans-serif;
+    --font-heading: 'Playfair Display', serif;
+
+    /* Textures */
+    --texture-dots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%23ffffff' fill-opacity='0.25'%3E%3Ccircle cx='2' cy='2' r='1.5'/%3E%3Ccircle cx='6' cy='6' r='1'/%3E%3C/g%3E%3C/svg%3E");
+
+    --texture-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+    --texture-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+
+    --texture-grain-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' fill='%23fff' opacity='0.08'/%3E%3C/svg%3E");
+
+    --texture-grain-dark-hover: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' fill='%23fff' opacity='0.12'/%3E%3C/svg%3E");
+
+    --texture-gloss: linear-gradient(120deg, transparent 45%, rgba(255, 255, 255, 0.6) 50%, transparent 55%);
+    --texture-gloss-dark: linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%);
+    --texture-gloss-dark-hover: linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.2) 50%, transparent 60%);
+
+    /* Shadows */
+    --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.05), 0 6px 20px rgba(0, 0, 0, 0.1);
+    --shadow-small: 0 2px 6px rgba(0, 0, 0, 0.2);
+    --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
