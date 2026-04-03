@@ -9,6 +9,7 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400&display=swap"
         rel="stylesheet">
     <title>Classificador d'Estils</title>
+    <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
     <script
@@ -38,13 +39,22 @@
                     <label for="image-input" id="upload-btn">Pujar imatge</label>
                     <button id="webcam-btn">Activar Webcam</button>
                     <input type="file" id="image-input" accept="image/*">
-                    <div id="mode-toggle">
+                    <div class="toggle-group">
                         <label class="switch">
                             <input type="checkbox" id="mode-switch">
                             <span class="slider"></span>
                         </label>
-                        <span id="mode-label">Mode Kids</span>
+                        <span class="toggle-label">Mode Kids</span>
                     </div>
+                    <div class="toggle-group">
+                        <label class="switch">
+                            <input type="checkbox" id="popup-switch">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label">Pop Up</span>
+                    </div>
+
+
                 </div>
                 <div id="display">
                     <video id="webcam" autoplay playsinline></video>
@@ -86,9 +96,9 @@
             <div class="gallery-grid"></div>
         </div>
     </div>
-
-    <script src="script.js"></script>
     <script src="config.js"></script>
+    <script src="result-page.js"></script>
+    <script src="script.js"></script>
 
 </body>
 

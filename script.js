@@ -2,6 +2,7 @@ const MODEL_URL = "https://teachablemachine.withgoogle.com/models/bMXg8u3wX/";
 const THRESHOLD = 0.3;//0.7;
 const galleryQueue = [];
 const MAX_GALLERY = 16;
+const resultPage = new ResultPage(CONFIG);
 
 const state = {
     model: null,
@@ -12,11 +13,13 @@ const state = {
     isDetecting: false,
     lastFaceBox: null,
     kidMode: false,
-    smoothBox: null
+    smoothBox: null,
+    popupEnabled: false
 };
 
 const elements = {
     webcamBtn: document.getElementById("webcam-btn"),
+    webcamCanvas: document.getElementById("webcam-canvas"),
     captureBtn: document.getElementById("capture-btn"),
     imageInput: document.getElementById("image-input"),
     uploadedImage: document.getElementById("uploaded-image"),
@@ -24,7 +27,9 @@ const elements = {
     confidence: document.getElementById("confidence"),
     display: document.getElementById("display"),
     overlay: document.getElementById("overlay"),
-    resetBtn: document.getElementById("reset-btn")
+    resetBtn: document.getElementById("reset-btn"),
+    popupSwitch: document.getElementById("popup-switch"),
+    modeSwitch: document.getElementById("mode-switch")
 
 };
 
@@ -55,7 +60,7 @@ function stopWebcam() {
     state.webcam.stop();
     state.isWebcamActive = false;
 
-    document.getElementById("webcam-canvas")?.remove();
+    elements.webcamCanvas?.remove();
     elements.captureBtn.style.display = "none";
     elements.webcamBtn.textContent = "Activar Webcam";
 
@@ -261,7 +266,7 @@ elements.captureBtn.addEventListener("click", async () => {
     showImage(imageDataURL);
     elements.uploadedImage.classList.add("captured");
     state.webcam.pause();       //Pausam per un segon
-    document.getElementById("webcam-canvas").style.display = "none";
+    elements.webcamCanvas.style.display = "none";
 
     const loading = document.getElementById("loading");
     document.getElementById("result").classList.add("is-loading");
@@ -299,11 +304,14 @@ elements.captureBtn.addEventListener("click", async () => {
 
         // 4. Afegir a la galeria (amb overlay ja posicionat)
         addToGallery();
+        if (state.popupEnabled) {
+            resultPage.capture(elements, state);
+        }
 
         // 5. Tornar al tracking en viu
         setTimeout(async () => {
             elements.uploadedImage.style.display = "none";
-            document.getElementById("webcam-canvas").style.display = "block";
+            elements.webcamCanvas.style.display = "block";
             await state.webcam.play();
             requestAnimationFrame(updateWebcam);
         }, 1000);
@@ -337,7 +345,7 @@ elements.imageInput.addEventListener("change", async (e) => {
     reader.readAsDataURL(file);
 });
 
-document.getElementById("mode-switch").addEventListener("change", (e) => {
+elements.modeSwitch.addEventListener("change", (e) => {
     state.kidMode = e.target.checked;
     updateLabels();
 
@@ -345,6 +353,11 @@ document.getElementById("mode-switch").addEventListener("change", (e) => {
         const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
         elements.predictedClass.textContent = names[state.currentStyle];
     }
+});
+
+
+elements.popupSwitch.addEventListener("change", (e) => {
+    state.popupEnabled = e.target.checked;
 });
 
 function updateLabels() {
@@ -461,7 +474,6 @@ function appendToGalleryGrid(dataURL) {
     `;
 
     target.appendChild(polaroid);
-    //target.prepend(polaroid);   this to have newest on top
     galleryQueue.push(polaroid);
 
     if (galleryQueue.length > MAX_GALLERY) {
@@ -483,8 +495,6 @@ function smoothBox(newBox, factor = 0.30) {
     state.smoothBox.height += (newBox.height - state.smoothBox.height) * factor;
     return state.smoothBox;
 }
-
-
 
 
 init();
