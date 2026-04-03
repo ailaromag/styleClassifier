@@ -1,19 +1,19 @@
 * {
-    font-family: 'Raleway', sans-serif;
+    font-family: var(--font-body);
     font-weight: 300;
 }
 
 h1,
 h2,
 h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
     font-weight: 400;
 }
 
 body {
-    overflow-x:auto;
-    background-color: #eadbbf;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%23ffffff' fill-opacity='0.25'%3E%3Ccircle cx='2' cy='2' r='1.5'/%3E%3Ccircle cx='6' cy='6' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    overflow-x: auto;
+    background-color: var(--bg-warm);
+    background-image: var(--texture-dots);
     background-blend-mode: overlay;
 }
 
@@ -24,7 +24,7 @@ body::after {
     inset: 0;
     pointer-events: none;
     opacity: 0.1;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: var(--texture-noise);
 }
 
 
@@ -39,7 +39,6 @@ body::after {
 
 #main {
     flex: 3;
-    /*min-width: 580px; */
     text-align: center;
     max-width: 620px;
 }
@@ -72,8 +71,8 @@ body::after {
 
 h1 {
     text-align: left;
-    font-family: 'Playfair Display', serif;
-    color: #333;
+    font-family: var(--font-heading);
+    color: var(--text-dark);
     line-height: 0.6;
     font-weight: bold;
     max-width: fit-content;
@@ -85,14 +84,14 @@ h1 .line1 {
     display: block;
     font-size: 2.5rem;
     font-weight: bold;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
 }
 
 h1 .line2 {
     display: block;
     font-size: 2.6rem;
     font-weight: bold;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
     word-spacing: 0.4rem;
 }
 
@@ -100,7 +99,7 @@ h1 .style-text {
     font-size: 4.2rem;
     letter-spacing: -0.05em;
     text-transform: uppercase;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
     font-weight: bold;
 }
 
@@ -111,14 +110,10 @@ h1 .style-text {
     background: rgb(247, 247, 247);
     padding: 0.75rem;
     border-radius: 0.4rem;
-    background-color: #f9f8f4;
-    background-image:
-        linear-gradient(120deg, transparent 45%, rgba(255, 255, 255, 0.6) 50%, transparent 55%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-color: var(--paper-white);
+    background-image: var(--texture-gloss), var(--texture-grain);
     background-size: 200% 100%, auto;
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.05),
-        0 6px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-soft);
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
@@ -144,7 +139,7 @@ h1 .style-text {
     max-width: 540px;
     aspect-ratio: 1/1;
     margin: 0.5rem auto;
-    background-color: #eee;
+    background-color: var(--grey-bg);
     border-radius: 4px;
     overflow: hidden;
     display: flex;
@@ -176,7 +171,7 @@ h1 .style-text {
     background-color: rgb(255, 255, 255);
     border: 3px solid rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-button);
 }
 
 #capture-btn::after {
@@ -208,10 +203,10 @@ h1 .style-text {
     width: 4.2rem;
     height: 1.8rem;
     border-radius: 0.4rem;
-    background-color: #7d2222;
-    border: 3px solid #7d2222;
+    background-color: var(--accent);
+    border: 3px solid var(--accent);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-button);
     color: white;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -240,27 +235,23 @@ h1 .style-text {
 #upload-btn {
     display: inline-block;
     padding: 0.45rem 1rem;
-    background-color: #333;
+    background-color: var(--text-dark);
     color: white;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-size: 0.5rem;
     clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
-    background-image:
-        linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' fill='%23fff' opacity='0.08'/%3E%3C/svg%3E");
+    background-image: var(--texture-gloss-dark), var(--texture-grain-dark);
     background-size: 200% 100%, auto;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-small);
     border: none;
 }
 
 #webcam-btn:hover,
 #upload-btn:hover {
     background-color: #444;
-    background-image:
-        linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.2) 50%, transparent 60%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' fill='%23fff' opacity='0.12'/%3E%3C/svg%3E");
+    background-image: var(--texture-gloss-dark-hover), var(--texture-grain-dark-hover);
 }
 
 
@@ -304,7 +295,7 @@ h1 .style-text {
 }
 
 #result-placeholder {
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
     color: #aaa;
     font-size: 0.85rem;
     font-style: italic;
@@ -319,16 +310,16 @@ h1 .style-text {
 #predicted-class {
     font-size: 1.3rem;
     font-weight: bold;
-    color: #333;
+    color: var(--text-dark);
     margin: 0;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
 }
 
 #confidence {
     margin: 0;
-    color: #888;
+    color: var(--text-muted);
     font-size: 1rem;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
 }
 
 
@@ -364,20 +355,20 @@ progress {
     height: 0.75rem;
     border: none;
     border-radius: 4px;
-    background-color: #e0e0e0;
+    background-color: var(--grey-light);
     overflow: hidden;
 }
 
 progress::-webkit-progress-bar {
-    background-color: #e0e0e0;
+    background-color: var(--grey-light);
 }
 
 progress::-webkit-progress-value {
-    background-color: #7d2222;
+    background-color: var(--accent);
 }
 
 progress::-moz-progress-bar {
-    background-color: #7d2222;
+    background-color: var(--accent);
 }
 
 
@@ -409,7 +400,7 @@ progress::-moz-progress-bar {
 
 #loading {
     text-align: center;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
     font-size: 1rem;
     color: #bd9494;
     padding: 0.4rem 0;
@@ -429,7 +420,7 @@ progress::-moz-progress-bar {
     font-size: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #333;
+    color: var(--text-dark);
 }
 
 .switch {
@@ -450,7 +441,7 @@ progress::-moz-progress-bar {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--grey-mid);
     border-radius: 1.2rem;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -469,7 +460,7 @@ progress::-moz-progress-bar {
 }
 
 .switch input:checked+.slider {
-    background-color: #7d2222;
+    background-color: var(--accent);
 }
 
 .switch input:checked+.slider::before {
@@ -501,17 +492,17 @@ progress::-moz-progress-bar {
 .polaroid-caption {
     padding: 2px 1px;
     text-align: center;
-    font-family: 'Playfair Display', serif;
+    font-family: var(--font-heading);
     font-size: 0.65rem;
-    color: #333;
+    color: var(--text-dark);
     line-height: 1.3;
 }
 
 .polaroid-confidence {
-    font-family: 'Raleway', sans-serif;
+    font-family: var(--font-body);
     font-weight: 400;
     font-size: 0.3rem;
-    color: #888;
+    color: var(--text-muted);
 }
 
 
@@ -535,12 +526,12 @@ progress::-moz-progress-bar {
 
     #container {
         max-width: 100%;
-        min-width: unset;     
+        min-width: unset;
         padding: 0.75rem;
     }
 
     h1 {
-        margin-bottom:3rem;
+        margin-bottom: 3rem;
         line-height: 0.7;
     }
 
