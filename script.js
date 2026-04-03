@@ -19,7 +19,6 @@ const state = {
 
 const elements = {
     webcamBtn: document.getElementById("webcam-btn"),
-    webcamCanvas: document.getElementById("webcam-canvas"),
     captureBtn: document.getElementById("capture-btn"),
     imageInput: document.getElementById("image-input"),
     uploadedImage: document.getElementById("uploaded-image"),
@@ -60,7 +59,7 @@ function stopWebcam() {
     state.webcam.stop();
     state.isWebcamActive = false;
 
-    elements.webcamCanvas?.remove();
+    document.getElementById("webcam-canvas")?.remove();
     elements.captureBtn.style.display = "none";
     elements.webcamBtn.textContent = "Activar Webcam";
 
@@ -266,7 +265,7 @@ elements.captureBtn.addEventListener("click", async () => {
     showImage(imageDataURL);
     elements.uploadedImage.classList.add("captured");
     state.webcam.pause();       //Pausam per un segon
-    elements.webcamCanvas.style.display = "none";
+    document.getElementById("webcam-canvas").style.display = "none";
 
     const loading = document.getElementById("loading");
     document.getElementById("result").classList.add("is-loading");
@@ -311,7 +310,7 @@ elements.captureBtn.addEventListener("click", async () => {
         // 5. Tornar al tracking en viu
         setTimeout(async () => {
             elements.uploadedImage.style.display = "none";
-            elements.webcamCanvas.style.display = "block";
+            document.getElementById("webcam-canvas").style.display = "block";
             await state.webcam.play();
             requestAnimationFrame(updateWebcam);
         }, 1000);
