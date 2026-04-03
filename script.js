@@ -11,7 +11,8 @@ const state = {
     currentStyle: null,
     isDetecting: false,
     lastFaceBox: null,
-    kidMode: false
+    kidMode: false,
+    smoothBox: null
 };
 
 const elements = {
@@ -94,7 +95,8 @@ async function updateWebcam() { // Ara és async perque utilitzam await per la d
             try {
                 const box = await detectFace(state.webcam.canvas);
                 if (box) {
-                    state.lastFaceBox = box;
+                    //  state.lastFaceBox = box;
+                    state.lastFaceBox = smoothBox(box);
                     positionOverlay(box);
                 } else {
                     elements.overlay.style.display = "none";
@@ -102,6 +104,8 @@ async function updateWebcam() { // Ara és async perque utilitzam await per la d
             } catch (e) {
             }
             state.isDetecting = false;
+        } else if (state.smoothBox && state.currentStyle) {
+            positionOverlay(state.smoothBox);
         }
 
         requestAnimationFrame(updateWebcam);
@@ -145,11 +149,6 @@ async function predict(imageElement) {
         state.currentStyle = best.className;
         elements.confidence.textContent = `amb confiança del: ${(best.probability * 100).toFixed(1)}%`;
         elements.overlay.src = CONFIG.overlays[best.className];
-        // Comentat per testejar els Overlays:
-        //elements.overlay.src=CONFIG.overlays[0]; // OldMoney
-        //  elements.overlay.src=CONFIG.overlays[1]; // Streetwear
-        //elements.overlay.src=CONFIG.overlays[2]; // CottageCore
-        // elements.overlay.src = CONFIG.overlays[3]; // Rockstar
 
         elements.resetBtn.style.display = "block";
 
@@ -222,9 +221,12 @@ function positionOverlay(box) {
     } else if (state.currentStyle === "Rockstar") {
         yOffset = 0.0; // height * 0.0;
     } else if (state.currentStyle === "Streetwear") {
-        yOffset = height * 1.2;
-    } else if (state.currentStyle === "CottageCore") {
+        elements.overlay.style.left = (x - (width * 0.35)) + "px";
         yOffset = height * 1;
+    } else if (state.currentStyle === "CottageCore") {
+        elements.overlay.style.width = (width * 1.6) + "px";
+        yOffset = height * 1.3;
+
     }
 
     elements.overlay.style.top = (y - yOffset) + "px";
@@ -244,6 +246,9 @@ function detectFaceWithTimeout(imageElement, ms = 2000) {
 elements.captureBtn.addEventListener("click", async () => {
     if (!state.webcam) return;
 
+    document.getElementById("result-placeholder")?.remove();
+
+
     // Efecte flash
     const flash = document.getElementById("flash");
     flash.classList.remove("active");
@@ -259,7 +264,10 @@ elements.captureBtn.addEventListener("click", async () => {
     document.getElementById("webcam-canvas").style.display = "none";
 
     const loading = document.getElementById("loading");
+    document.getElementById("result").classList.add("is-loading");
     loading.style.display = "block";
+    resetValues();
+
 
     // 2. Classificar la imatge estática
     setTimeout(async () => {
@@ -267,9 +275,11 @@ elements.captureBtn.addEventListener("click", async () => {
         let faceBox = null;
         try {
             const tempCanvas = document.createElement("canvas");
-            tempCanvas.width = 400;
-            tempCanvas.height = 400;
-            tempCanvas.getContext("2d").drawImage(elements.uploadedImage, 0, 0, 400, 400);
+            const displayW = elements.display.clientWidth;
+            const displayH = elements.display.clientHeight;
+            tempCanvas.width = displayW;
+            tempCanvas.height = displayH;
+            tempCanvas.getContext("2d").drawImage(elements.uploadedImage, 0, 0, displayW, displayH);
             faceBox = await detectFaceWithTimeout(tempCanvas);
             if (faceBox) state.lastFaceBox = faceBox;
         } catch (e) {
@@ -278,6 +288,8 @@ elements.captureBtn.addEventListener("click", async () => {
 
         // 2. Classificar
         await predict(elements.uploadedImage);
+        document.getElementById("result").classList.remove("is-loading");
+
         loading.style.display = "none";
 
         // 3. Posicionar overlay on ja sabem que hi ha la cara
@@ -308,6 +320,9 @@ elements.captureBtn.addEventListener("click", async () => {
 elements.imageInput.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    document.getElementById("result-placeholder")?.remove();
+
 
     if (state.isWebcamActive) stopWebcam();
 
@@ -352,6 +367,7 @@ function resetValues() {
     state.currentStyle = null;
     state.currentOverlay = null;
     state.lastFaceBox = null;
+    state.smoothBox = null;
     elements.overlay.style.display = "none";
     elements.predictedClass.textContent = "-";
     elements.confidence.textContent = "-";
@@ -454,46 +470,21 @@ function appendToGalleryGrid(dataURL) {
     }
 }
 
-// === DEBUG: simulate 8 captures ===
-setTimeout(() => {
-    const fakeCaptures = [
-        { style: "OldMoney", conf: 0.92, color: "#8b7355" },
-        { style: "Streetwear", conf: 0.85, color: "#444" },
-        { style: "CottageCore", conf: 0.78, color: "#a8c090" },
-        { style: "Rockstar", conf: 0.91, color: "#2a2a2a" },
-        { style: "OldMoney", conf: 0.73, color: "#b8a080" },
-        { style: "Streetwear", conf: 0.88, color: "#666" },
-        { style: "CottageCore", conf: 0.82, color: "#90b070" },
-        { style: "Rockstar", conf: 0.95, color: "#1a1a1a" },
-         { style: "OldMoney", conf: 0.92, color: "#8b7355" },
-        { style: "Streetwear", conf: 0.85, color: "#444" },
-        { style: "CottageCore", conf: 0.78, color: "#a8c090" },
-        { style: "Rockstar", conf: 0.91, color: "#2a2a2a" },
-        { style: "OldMoney", conf: 0.73, color: "#b8a080" },
-        { style: "Streetwear", conf: 0.88, color: "#666" },
-        { style: "CottageCore", conf: 0.82, color: "#90b070" },
-        { style: "Rockstar", conf: 0.95, color: "#1a1a1a" },
-    ];
 
-    fakeCaptures.forEach(({ style, conf, color }) => {
-        // Set state as if a real capture just happened
-        state.currentStyle = style;
-        const names = state.kidMode ? CONFIG.names.kid : CONFIG.names.adult;
-        elements.confidence.textContent = `amb confiança del: ${(conf * 100).toFixed(1)}%`;
 
-        // Use the real gallery function
-        const c = document.createElement("canvas");
-        c.width = 1; c.height = 1;
-        c.getContext("2d").fillStyle = color;
-        c.getContext("2d").fillRect(0, 0, 1, 1);
-        appendToGalleryGrid(c.toDataURL());
-    });
+function smoothBox(newBox, factor = 0.30) {
+    if (!state.smoothBox) {
+        state.smoothBox = { ...newBox };
+        return state.smoothBox;
+    }
+    state.smoothBox.xCenter += (newBox.xCenter - state.smoothBox.xCenter) * factor;
+    state.smoothBox.yCenter += (newBox.yCenter - state.smoothBox.yCenter) * factor;
+    state.smoothBox.width += (newBox.width - state.smoothBox.width) * factor;
+    state.smoothBox.height += (newBox.height - state.smoothBox.height) * factor;
+    return state.smoothBox;
+}
 
-    // Clean up state
-    state.currentStyle = null;
-    elements.confidence.textContent = "-";
-}, 500);
-// === END DEBUG ===
+
 
 
 init();

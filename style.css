@@ -11,12 +11,9 @@ h3 {
 }
 
 body {
+    overflow-x:auto;
     background-color: #eadbbf;
-
-    /* Staggered dot/hex pattern */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%23ffffff' fill-opacity='0.25'%3E%3Ccircle cx='2' cy='2' r='1.5'/%3E%3Ccircle cx='6' cy='6' r='1'/%3E%3C/g%3E%3C/svg%3E");
-
-    /* Subtle paper-like gradient over the top */
     background-blend-mode: overlay;
 }
 
@@ -31,10 +28,10 @@ body::after {
 }
 
 
+/* ===== LAYOUT ===== */
 
 #layout {
     display: flex;
-    /* gap: 0.3vw;*/
     align-items: flex-start;
     max-width: 1600px;
     margin: 0 auto;
@@ -42,10 +39,9 @@ body::after {
 
 #main {
     flex: 3;
-    min-width: 0;
+    /*min-width: 580px; */
     text-align: center;
-    max-width: 42vw;
-
+    max-width: 620px;
 }
 
 .gallery-side {
@@ -59,18 +55,20 @@ body::after {
 .gallery-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.2vw;
-
+    gap: 0.9rem;
+    width: 85%;
+    align-content: start;
 }
 
 .gallery-grid img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 0.25vw;
+    border-radius: 2px;
 }
 
 
+/* ===== TITLE ===== */
 
 h1 {
     text-align: left;
@@ -79,59 +77,53 @@ h1 {
     line-height: 0.6;
     font-weight: bold;
     max-width: fit-content;
-    margin: 0 auto 3.5vw auto;
-    padding-top: 0.7vw;
+    margin: 0 auto 2.6rem auto;
+    padding-top: 0.5rem;
 }
 
 h1 .line1 {
     display: block;
-    font-size: 2.75vw;
+    font-size: 2.5rem;
     font-weight: bold;
     font-family: 'Playfair Display', serif;
 }
 
 h1 .line2 {
     display: block;
-    font-size: 3.15vw;
+    font-size: 2.6rem;
     font-weight: bold;
     font-family: 'Playfair Display', serif;
-    word-spacing: 0.5vw;
+    word-spacing: 0.4rem;
 }
 
 h1 .style-text {
-    font-size: 4.7vw;
+    font-size: 4.2rem;
     letter-spacing: -0.05em;
     text-transform: uppercase;
     font-family: 'Playfair Display', serif;
     font-weight: bold;
 }
 
+
+/* ===== CONTAINER (paper card) ===== */
+
 #container {
     background: rgb(247, 247, 247);
-    padding: 1vw;
-    border-radius: 0.5vw;
-    box-shadow: 0 0.1vw 0.5vw rgba(0, 0, 0, 0.1);
+    padding: 0.75rem;
+    border-radius: 0.4rem;
     background-color: #f9f8f4;
-    /* A slightly warmer 'aged' white */
     background-image:
-        /* 1. Glossy highlight (diagonal sheen) */
         linear-gradient(120deg, transparent 45%, rgba(255, 255, 255, 0.6) 50%, transparent 55%),
-        /* 2. Subtle paper grain */
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-
     background-size: 200% 100%, auto;
-    /* Stretches the sheen across the container */
-
-    /* Improved Box Shadow for a 'heavy' paper feel */
     box-shadow:
-        0 0.1vw 0.2vw rgba(0, 0, 0, 0.05),
-        /* Subtle edge */
-        0 0.5vw 1.5vw rgba(0, 0, 0, 0.1);
-    /* Soft lift */
-
+        0 1px 3px rgba(0, 0, 0, 0.05),
+        0 6px 20px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.05);
-    /* Defines the cut edge of the paper */
 }
+
+
+/* ===== DISPLAY / WEBCAM ===== */
 
 #webcam {
     width: 100%;
@@ -144,18 +136,16 @@ h1 .style-text {
     width: 100%;
     height: auto;
     max-height: 100%;
-    border-radius: 0.4vw;
+    border-radius: 4px;
 }
 
 #display {
     width: 100%;
-    max-width: 34vw;
-    height: 55vh;
-    /* margin: 1.5vw auto 1vw auto;*/
-    /* aspect-ratio: 1/1;*/
-    margin: 0.75vw auto;
+    max-width: 540px;
+    aspect-ratio: 1/1;
+    margin: 0.5rem auto;
     background-color: #eee;
-    border-radius: 0.25vw;
+    border-radius: 4px;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -171,19 +161,22 @@ h1 .style-text {
     transition: all 0.1s ease-out;
 }
 
+
+/* ===== CAPTURE / RESET BUTTONS ===== */
+
 #capture-btn {
     display: none;
     position: absolute;
-    bottom: 1vw;
+    bottom: 0.75rem;
     left: 50%;
     transform: translateX(-50%);
-    width: 3.45vw;
-    height: 3.45vw;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%;
     background-color: rgb(255, 255, 255);
-    border: 0.25vw solid rgba(255, 255, 255, 0.5);
+    border: 3px solid rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    box-shadow: 0 0.1vw 0.5vw rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 #capture-btn::after {
@@ -192,11 +185,11 @@ h1 .style-text {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 2.65vw;
-    height: 2.65vw;
+    width: 2.3rem;
+    height: 2.3rem;
     border-radius: 50%;
     background-color: white;
-    border: 0.1vw solid #ddd;
+    border: 1px solid #ddd;
 }
 
 #capture-btn:hover::after {
@@ -210,29 +203,32 @@ h1 .style-text {
 #reset-btn {
     display: none;
     position: absolute;
-    bottom: 1vw;
-    right: 1vw;
-    width: 4.9vw;
-    height: 2.2vw;
-    border-radius: 0.6vw;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    width: 4.2rem;
+    height: 1.8rem;
+    border-radius: 0.4rem;
     background-color: #7d2222;
-    border: 0.25vw solid #7d2222;
+    border: 3px solid #7d2222;
     cursor: pointer;
-    box-shadow: 0 0.1vw 0.5vw rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     color: white;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-size: 0.5vw;
+    font-size: 0.5rem;
     font-weight: bold;
 }
 
+
+/* ===== CONTROLS (upload/webcam/mode) ===== */
+
 #controls {
     display: flex;
-    gap: 0.5vw;
+    gap: 0.4rem;
     margin-bottom: 0;
     position: relative;
     z-index: 2;
-    margin-top: -1.98vw;
+    margin-top: -1.5rem;
     transform: translateY(-50%);
 }
 
@@ -243,42 +239,32 @@ h1 .style-text {
 #webcam-btn,
 #upload-btn {
     display: inline-block;
-    padding: 0.6vw 1.25vw;
+    padding: 0.45rem 1rem;
     background-color: #333;
-    /* Your original dark color */
     color: white;
-    /* Your original text color */
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-size: 0.55vw;
-
-    /* THE SHAPE */
+    font-size: 0.5rem;
     clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
-
-    /* THE TEXTURE FOR DARK BACKGROUNDS */
     background-image:
-        /* 1. Subtle 'Gloss' reflection (Lowered opacity for dark bg) */
         linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%),
-        /* 2. Light Grain (White noise at 0.08 opacity so it looks like paper fiber) */
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' fill='%23fff' opacity='0.08'/%3E%3C/svg%3E");
-
     background-size: 200% 100%, auto;
-
-    /* Subtle shadow to separate it from the #container */
-    box-shadow: 0 0.2vw 0.4vw rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     border: none;
 }
 
 #webcam-btn:hover,
 #upload-btn:hover {
     background-color: #444;
-    /* This makes the grain pop a bit more on hover */
     background-image:
         linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.2) 50%, transparent 60%),
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' fill='%23fff' opacity='0.12'/%3E%3C/svg%3E");
 }
 
+
+/* ===== UPLOADED IMAGE ===== */
 
 #uploaded-image {
     max-width: 100%;
@@ -293,23 +279,45 @@ h1 .style-text {
     object-fit: cover;
 }
 
+
+/* ===== RESULTS ===== */
+
 #result {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75vw;
-    padding: 0.4vw 1vw;
-    border-radius: 0.25vw;
+    gap: 0.5rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 4px;
     margin-bottom: 0;
 }
 
 #result h2 {
     margin: 0;
-    font-size: 1.3vw;
+    font-size: 1.15rem;
+}
+
+#result.is-loading h2,
+#result.is-loading #predicted-class,
+#result.is-loading #confidence {
+    display: none;
+}
+
+#result-placeholder {
+    font-family: 'Playfair Display', serif;
+    color: #aaa;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+#result-placeholder ~ h2,
+#result-placeholder ~ #predicted-class,
+#result-placeholder ~ #confidence {
+    display: none;
 }
 
 #predicted-class {
-    font-size: 1.5vw;
+    font-size: 1.3rem;
     font-weight: bold;
     color: #333;
     margin: 0;
@@ -319,9 +327,12 @@ h1 .style-text {
 #confidence {
     margin: 0;
     color: #888;
-    font-size: 1.2vw;
+    font-size: 1rem;
     font-family: 'Playfair Display', serif;
 }
+
+
+/* ===== PROBABILITIES ===== */
 
 #probabilities {
     text-align: left;
@@ -329,30 +340,30 @@ h1 .style-text {
 }
 
 #probabilities h3 {
-    font-size: 1.4vw;
-    margin: 0.25vw 0;
+    font-size: 1.2rem;
+    margin: 0.2rem 0;
 }
 
 .prob-bar {
     display: flex;
     align-items: center;
-    gap: 0.5vw;
-    margin-bottom: 0.5vw;
-    font-size: 1vw;
+    gap: 0.4rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.85rem;
 }
 
 .prob-bar span:first-child {
-    width: 8.7vw;
-    min-width: 8.7vw;
+    width: 7.5rem;
+    min-width: 7.5rem;
     white-space: nowrap;
-    font-size: 1vw;
+    font-size: 0.85rem;
 }
 
 progress {
     flex: 1;
-    height: 1vw;
+    height: 0.75rem;
     border: none;
-    border-radius: 0.35vw;
+    border-radius: 4px;
     background-color: #e0e0e0;
     overflow: hidden;
 }
@@ -368,6 +379,9 @@ progress::-webkit-progress-value {
 progress::-moz-progress-bar {
     background-color: #7d2222;
 }
+
+
+/* ===== FLASH ===== */
 
 #flash {
     position: absolute;
@@ -386,32 +400,33 @@ progress::-moz-progress-bar {
 }
 
 @keyframes flash {
-    0% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-    }
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
+
+
+/* ===== LOADING ===== */
 
 #loading {
     text-align: center;
     font-family: 'Playfair Display', serif;
-    font-size: 0.75vw;
+    font-size: 1rem;
     color: #bd9494;
-    padding: 0.5vw 0;
+    padding: 0.4rem 0;
     display: none;
 }
+
+
+/* ===== MODE TOGGLE ===== */
 
 #mode-toggle {
     display: flex;
     align-items: center;
-    gap: 0.5vw;
+    gap: 0.4rem;
 }
 
 #mode-label {
-    font-size: 0.60vw;
+    font-size: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #333;
@@ -419,8 +434,8 @@ progress::-moz-progress-bar {
 
 .switch {
     position: relative;
-    width: 2.45vw;
-    height: 1.35vw;
+    width: 2.2rem;
+    height: 1.2rem;
 }
 
 .switch input {
@@ -436,7 +451,7 @@ progress::-moz-progress-bar {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    border-radius: 1.35vw;
+    border-radius: 1.2rem;
     cursor: pointer;
     transition: background-color 0.3s;
 }
@@ -444,10 +459,10 @@ progress::-moz-progress-bar {
 .slider::before {
     content: '';
     position: absolute;
-    height: 1.1vw;
-    width: 1.1vw;
-    left: 0.15vw;
-    bottom: 0.15vw;
+    height: 0.95rem;
+    width: 0.95rem;
+    left: 0.13rem;
+    bottom: 0.13rem;
     background-color: white;
     border-radius: 50%;
     transition: transform 0.3s;
@@ -458,18 +473,21 @@ progress::-moz-progress-bar {
 }
 
 .switch input:checked+.slider::before {
-    transform: translateX(1.1vw);
+    transform: translateX(1rem);
 }
 
-/* Polaroid cards */
+
+/* ===== POLAROID CARDS ===== */
+
 .polaroid {
     background: white;
-    padding: 0.2vw;
-    padding-bottom: 0.15vw;
-    border-radius: 0.1vw;
-    box-shadow: 0.1vw 0.15vw 0.4vw rgba(0, 0, 0, 0.2);
+    padding: 3px;
+    padding-bottom: 2px;
+    border-radius: 1px;
+    box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
     transform: rotate(var(--rotation, 0deg));
-    max-width: 10vw;
+    max-width: 100%;
+    width: 100%;
 }
 
 .polaroid img {
@@ -477,14 +495,14 @@ progress::-moz-progress-bar {
     aspect-ratio: 1/1;
     object-fit: cover;
     display: block;
-    border-radius: 0.05vw;
+    border-radius: 1px;
 }
 
 .polaroid-caption {
-    padding: 0.15vw 0.05vw;
+    padding: 2px 1px;
     text-align: center;
     font-family: 'Playfair Display', serif;
-    font-size: 0.75vw;
+    font-size: 0.65rem;
     color: #333;
     line-height: 1.3;
 }
@@ -492,11 +510,12 @@ progress::-moz-progress-bar {
 .polaroid-confidence {
     font-family: 'Raleway', sans-serif;
     font-weight: 400;
-    font-size: 0.3vw;
+    font-size: 0.3rem;
     color: #888;
 }
 
 
+/* ===== MOBILE ===== */
 
 @media (max-width: 800px) {
     .gallery-side {
@@ -505,94 +524,96 @@ progress::-moz-progress-bar {
 
     #main {
         max-width: 100%;
+        padding: 0 0.5rem;
     }
 
     #display {
         max-width: 100%;
-        height: 50vh;
+        aspect-ratio: 1/1;
+        height: auto;
     }
 
     #container {
         max-width: 100%;
-        padding: 3vw;
+        min-width: unset;     
+        padding: 0.75rem;
     }
 
-    h1 .line1 {
-        font-size: 8vw;
+    h1 {
+        margin-bottom:3rem;
+        line-height: 0.7;
     }
 
     h1 .line2 {
-        font-size: 9vw;
+        font-size: 2rem;
     }
 
     h1 .style-text {
-        font-size: 14vw;
+        font-size: 3.2rem;
+    }
+
+    #controls {
+        margin-top: -1.4rem;
+        gap: 0.3rem;
     }
 
     #webcam-btn,
     #upload-btn {
-        font-size: 2.5vw;
-        padding: 2vw 4vw;
+        font-size: 0.45rem;
+        padding: 0.4rem 0.8rem;
     }
 
     #mode-label {
-        font-size: 2.5vw;
+        font-size: 0.45rem;
     }
 
     .switch {
-        width: 10vw;
-        height: 5.5vw;
+        width: 2rem;
+        height: 1.1rem;
     }
 
     .slider::before {
-        height: 4.5vw;
-        width: 4.5vw;
-        left: 0.5vw;
-        bottom: 0.5vw;
+        height: 0.85rem;
+        width: 0.85rem;
+        left: 0.13rem;
+        bottom: 0.13rem;
     }
 
     .switch input:checked+.slider::before {
-        transform: translateX(4.5vw);
+        transform: translateX(0.9rem);
     }
 
     #result h2 {
-        font-size: 4vw;
+        font-size: 1rem;
     }
 
     #predicted-class {
-        font-size: 5vw;
+        font-size: 1.2rem;
     }
 
     #confidence {
-        font-size: 3.5vw;
+        font-size: 0.85rem;
     }
 
     #probabilities h3 {
-        font-size: 4vw;
+        font-size: 1rem;
     }
 
     .prob-bar {
-        font-size: 3vw;
+        font-size: 0.75rem;
     }
 
     .prob-bar span:first-child {
-        width: 22vw;
-        min-width: 22vw;
-        font-size: 3vw;
+        width: 6.5rem;
+        min-width: 6.5rem;
+        font-size: 0.75rem;
     }
 
     progress {
-        height: 3vw;
+        height: 0.65rem;
     }
-
-    #controls {
-        margin-top: 0vw;
-        gap: 2vw;
-    }
-
-   
 
     #mode-toggle {
-        gap: 1.5vw;
+        gap: 0.3rem;
     }
 }

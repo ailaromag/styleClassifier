@@ -1,6 +1,6 @@
 const CONFIG = {
     overlays: {
-        "OldMoney": "img/crown.png",
+        "OldMoney":"img/crown.png",
         "Streetwear":"img/cap.png",
         "CottageCore": "img/flowers.png",
         "Rockstar": "img/glasses.png"
