@@ -89,24 +89,34 @@ async function startWebcam() {
 /**
  * Actualitza el frame de la webcam. Ha de detectar la cara en cada frame
  */
-async function updateWebcam() { // Ara és async perque utilitzam await per la detecció facial
+let lastPredictionTime = 0;
+const PREDICTION_INTERVAL = 400; // ms
+
+async function updateWebcam() {
     if (state.isWebcamActive && state.webcam) {
         state.webcam.update();
 
-        // Si hi ha un estil classificat, detectar la cara en el canvas en viu
+        const now = performance.now();
+        if (now - lastPredictionTime > PREDICTION_INTERVAL && !state.isPredicting) {
+            lastPredictionTime = now;
+            state.isPredicting = true;
+            predict(state.webcam.canvas).finally(() => {
+                state.isPredicting = false;
+            });
+        }
+
+        // Face detection (unchanged)
         if (state.currentStyle && !state.isDetecting) {
             state.isDetecting = true;
             try {
                 const box = await detectFace(state.webcam.canvas);
                 if (box) {
-                    //  state.lastFaceBox = box;
                     state.lastFaceBox = smoothBox(box);
                     positionOverlay(box);
                 } else {
                     elements.overlay.style.display = "none";
                 }
-            } catch (e) {
-            }
+            } catch (e) {}
             state.isDetecting = false;
         } else if (state.smoothBox && state.currentStyle) {
             positionOverlay(state.smoothBox);
